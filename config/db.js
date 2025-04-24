@@ -1,11 +1,13 @@
-// config/db.js
 import mysql from "mysql2/promise";
+import dotenv from "dotenv";
+dotenv.config();
 
 const dbConfig = {
-  host: "localhost", // Tu host de MariaDB
-  user: "root", // Tu usuario de MariaDB
-  password: "root", // Tu contraseña de MariaDB
-  database: "stockSystem", // El nombre de tu base de datos
+  host: process.env.HOST, // Tu host de MariaDB
+  user: process.env.USER_DB, // Tu usuario de MariaDB
+  password: process.env.PASSWORD_DB, // Tu contraseña de MariaDB
+  database: process.env.DATABASE, // El nombre de tu base de datos
+  port: process.env.PORT,
 };
 
 const pool = mysql.createPool(dbConfig);

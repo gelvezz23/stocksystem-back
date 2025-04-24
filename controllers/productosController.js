@@ -38,12 +38,16 @@ const productosController = {
       precio_venta,
       stock,
       categoria_id,
-      ubicacion_id,
       proveedor_id,
+      estado = "activo",
+      marca,
+      stock_minimo,
+      codigo,
+      image_url,
     } = req.body;
     try {
       const [result] = await pool.query(
-        "INSERT INTO Productos (nombre_producto, descripcion, precio_costo, precio_venta, stock, categoria_id, ubicacion_id, proveedor_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO Productos (nombre_producto, descripcion, precio_costo, precio_venta, stock, categoria_id, ubicacion_id, proveedor_id, estado, marca, stock_minimo, codigo, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)",
         [
           nombre_producto,
           descripcion,
@@ -53,6 +57,11 @@ const productosController = {
           categoria_id,
           ubicacion_id,
           proveedor_id,
+          estado,
+          marca,
+          stock_minimo,
+          codigo,
+          image_url,
         ]
       );
       res

@@ -11,6 +11,7 @@ import rolesRoutes from "./routes/roles.js";
 import usuariosRoutes from "./routes/usuarios.js";
 import authRoutes from "./routes/auth.js";
 import proveedoresRoutes from "./routes/proveedor.js";
+import categoriasRoutes from "./routes/categoria.js";
 
 const app = express();
 const PORT = 3001;
@@ -20,6 +21,8 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 app.use("/api", proveedoresRoutes);
+app.use("/api", categoriasRoutes);
+
 app.use("/api", productosRoutes);
 app.use("/api", clientesRoutes);
 app.use("/api", ventasRoutes);
