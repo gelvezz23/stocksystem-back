@@ -127,6 +127,21 @@ const productosController = {
       res.status(500).json({ message: "Error al eliminar producto" });
     }
   },
+
+  getAllproductInStockMinimun: async (req, res) => {
+    try {
+      const [rows] = await pool.query("SELECT * FROM Productos");
+
+      const productsNearMinStock = rows.filter((product) => {
+        return product.stock <= product.stock_minimo;
+      });
+
+      res.json(productsNearMinStock);
+    } catch (error) {
+      console.error("Error al obtener productos:", error);
+      res.status(500).json({ message: "Error al obtener productos" });
+    }
+  },
 };
 
 export default productosController;
