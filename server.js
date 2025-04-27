@@ -13,10 +13,17 @@ import authRoutes from "./routes/auth.js";
 import proveedoresRoutes from "./routes/proveedor.js";
 import categoriasRoutes from "./routes/categoria.js";
 
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://stock-sistem.vercel.app/"], // Lista de orígenes permitidos
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Métodos HTTP permitidos
+  credentials: true, // Habilitar el envío de cookies de origen cruzado (si es necesario)
+  allowedHeaders: "Content-Type, Authorization, X-Requested-With, Accept", // Cabeceras permitidas
+};
+
 const app = express();
 const PORT = 3001;
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json());
 

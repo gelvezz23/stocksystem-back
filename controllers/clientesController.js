@@ -122,6 +122,24 @@ const clientesController = {
       res.status(500).json({ message: "Error al eliminar cliente" });
     }
   },
+
+  getTecnicos: async (req, res) => {
+    try {
+      const [rows] = await pool.query(`
+        SELECT * FROM Usuarios WHERE rol_id = 3
+        `);
+
+      if (rows.length > 0) {
+        const data = rows.filter((item) => item.rol_id !== 1);
+        res.json(data);
+      } else {
+        res.status(404).json({ message: "Usuario no encontrado" });
+      }
+    } catch (error) {
+      console.error("Error al buscar usuario por email:", error);
+      res.status(500).json({ message: "Error al buscar usuario" });
+    }
+  },
 };
 
 export default clientesController;
