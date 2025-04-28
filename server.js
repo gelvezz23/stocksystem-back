@@ -13,11 +13,22 @@ import authRoutes from "./routes/auth.js";
 import proveedoresRoutes from "./routes/proveedor.js";
 import categoriasRoutes from "./routes/categoria.js";
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://stock-sistem.vercel.app/",
+]; // Reemplaza con los orígenes de tu frontend
+
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://stock-sistem.vercel.app/"], // Lista de orígenes permitidos
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Métodos HTTP permitidos
-  credentials: true, // Habilitar el envío de cookies de origen cruzado (si es necesario)
-  allowedHeaders: "Content-Type, Authorization, X-Requested-With, Accept", // Cabeceras permitidas
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Si necesitas manejar cookies de sesión o autenticación
+  allowedHeaders: "Content-Type, Authorization, X-Requested-With, Accept",
 };
 
 const app = express();
