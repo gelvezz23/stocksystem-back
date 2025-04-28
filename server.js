@@ -13,30 +13,10 @@ import authRoutes from "./routes/auth.js";
 import proveedoresRoutes from "./routes/proveedor.js";
 import categoriasRoutes from "./routes/categoria.js";
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://stock-sistem.vercel.app/",
-  "http://localhost:3000/dashboard/products/create",
-  "https://stock-sistem.vercel.app/",
-]; // Reemplaza con los orígenes de tu frontend
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Si necesitas manejar cookies de sesión o autenticación
-  allowedHeaders: "Content-Type, Authorization, X-Requested-With, Accept",
-};
-
 const app = express();
 const PORT = 3001;
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
