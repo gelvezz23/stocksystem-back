@@ -16,6 +16,8 @@ import categoriasRoutes from "./routes/categoria.js";
 const allowedOrigins = [
   "http://localhost:3000",
   "https://stock-sistem.vercel.app/",
+  "http://localhost:3000/dashboard/products/create",
+  "https://stock-sistem.vercel.app/",
 ]; // Reemplaza con los orígenes de tu frontend
 
 const corsOptions = {

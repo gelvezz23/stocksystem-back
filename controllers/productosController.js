@@ -81,12 +81,16 @@ const productosController = {
       precio_venta,
       stock,
       categoria_id,
-      ubicacion_id,
       proveedor_id,
+      estado = "activo",
+      marca,
+      stock_minimo,
+      codigo,
+      image_url,
     } = req.body;
     try {
       const [result] = await pool.query(
-        "UPDATE Productos SET nombre_producto = ?, descripcion = ?, precio_costo = ?, precio_venta = ?, stock = ?, categoria_id = ?, ubicacion_id = ?, proveedor_id = ? WHERE producto_id = ?",
+        "UPDATE Productos SET nombre_producto = ?, descripcion = ?, precio_costo = ?, precio_venta = ?, stock = ?, categoria_id = ?, proveedor_id = ?, estado = ?, marca = ?, stock_minimo = ? , codigo = ?, image_url = ?  WHERE producto_id = ?",
         [
           nombre_producto,
           descripcion,
@@ -94,8 +98,12 @@ const productosController = {
           precio_venta,
           stock,
           categoria_id,
-          ubicacion_id,
           proveedor_id,
+          estado,
+          marca,
+          stock_minimo,
+          codigo,
+          image_url,
           id,
         ]
       );
@@ -140,6 +148,38 @@ const productosController = {
     } catch (error) {
       console.error("Error al obtener productos:", error);
       res.status(500).json({ message: "Error al obtener productos" });
+    }
+  },
+
+  updateProductStatus: async (req, res) => {
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    if (!estado) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "El campo 'estado' es requerido en el cuerpo de la solicitud.",
+        });
+    }
+
+    try {
+      const [result] = await pool.query(
+        "UPDATE Productos SET estado = ? WHERE producto_id = ?",
+        [estado, id]
+      );
+
+      if (result.affectedRows > 0) {
+        res.json({ message: "Estado del producto actualizado" });
+      } else {
+        res.status(404).json({ message: "Producto no encontrado" });
+      }
+    } catch (error) {
+      console.error("Error al actualizar el estado del producto:", error);
+      res
+        .status(500)
+        .json({ message: "Error al actualizar el estado del producto" });
     }
   },
 };

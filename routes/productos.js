@@ -13,6 +13,8 @@ router.get(
 );
 router.post("/productos", productosController.createProducto);
 router.put("/productos/:id", productosController.updateProducto);
+router.patch("/productos/:id/estado", productosController.updateProductStatus); // Utiliza PATCH para actualizaciones parciales
+
 router.delete("/productos/:id", productosController.deleteProducto);
 
 export default router;
