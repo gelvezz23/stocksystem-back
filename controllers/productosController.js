@@ -44,10 +44,21 @@ const productosController = {
       stock_minimo,
       codigo,
       image_url,
+      sku,
     } = req.body;
     try {
+      const [existingProduct] = await pool.query(
+        "SELECT codigo FROM Productos WHERE codigo = ?",
+        [codigo]
+      );
+
+      if (existingProduct.length > 0) {
+        return res
+          .status(409)
+          .json({ message: "El código del producto ya existe" });
+      }
       const [result] = await pool.query(
-        "INSERT INTO Productos (nombre_producto, descripcion, precio_costo, precio_venta, stock, categoria_id, proveedor_id, estado, marca, stock_minimo, codigo, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)",
+        "INSERT INTO Productos (nombre_producto, descripcion, precio_costo, precio_venta, stock, categoria_id, proveedor_id, estado, marca, stock_minimo, codigo, image_url, sku) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?, ?)",
         [
           nombre_producto,
           descripcion,
@@ -61,6 +72,7 @@ const productosController = {
           stock_minimo,
           codigo,
           image_url,
+          sku,
         ]
       );
       res
@@ -156,12 +168,9 @@ const productosController = {
     const { estado } = req.body;
 
     if (!estado) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "El campo 'estado' es requerido en el cuerpo de la solicitud.",
-        });
+      return res.status(400).json({
+        message: "El campo 'estado' es requerido en el cuerpo de la solicitud.",
+      });
     }
 
     try {

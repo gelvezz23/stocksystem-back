@@ -10,7 +10,7 @@ const usuariosController = {
       // Verificar si el nombre de usuario o el email ya existen
       const [existingUser] = await pool.query(
         "SELECT * FROM Usuarios WHERE email = ?",
-        [nombre_usuario, email]
+        [email]
       );
       if (existingUser.length > 0) {
         return res.status(409).json({
