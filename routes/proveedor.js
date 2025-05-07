@@ -7,5 +7,8 @@ router.get("/proveedores", proveedoresController.getProveedores);
 router.get("/proveedores/:id", proveedoresController.getProveedorById);
 
 router.post("/proveedores", proveedoresController.createProveedor);
-
+router.patch(
+  "/proveedor/:usuario_id/status",
+  proveedoresController.updateProveedorStatus
+);
 export default router;

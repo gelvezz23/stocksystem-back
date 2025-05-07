@@ -9,30 +9,21 @@ const proveedoresController = {
       direccion,
       nit,
       estado = "activo",
-      usuario_id,
+      proveedor_id = 0,
     } = req.body;
 
     try {
       // Verificar si ya existe un proveedor con el mismo NIT (debería ser único)
       const [existingProveedor] = await pool.query(
-        "SELECT * FROM Proveedores WHERE usuario_id = ?",
-        [usuario_id]
+        "SELECT * FROM Proveedores WHERE proveedor_id = ?",
+        [proveedor_id]
       );
 
       if (existingProveedor.length > 0) {
-        // Si existe, realizar una actualización
         const clienteId = existingProveedor[0].proveedor_id;
         const [updateResult] = await pool.query(
-          "UPDATE Proveedores SET nombre_proveedor = ?, nit = ?, direccion = ?, telefono = ?, email = ?, usuario_id = ? WHERE proveedor_id = ?",
-          [
-            nombre_proveedor,
-            nit,
-            direccion,
-            telefono,
-            email,
-            usuario_id,
-            clienteId,
-          ]
+          "UPDATE Proveedores SET nombre_proveedor = ?, nit = ?, direccion = ?, telefono = ?, email = ? WHERE proveedor_id = ?",
+          [nombre_proveedor, nit, direccion, telefono, email, clienteId]
         );
 
         if (updateResult.affectedRows > 0) {
@@ -46,8 +37,8 @@ const proveedoresController = {
       }
       // Insertar el nuevo proveedor en la base de datos
       const [result] = await pool.query(
-        "INSERT INTO Proveedores (nombre_proveedor, telefono, email, direccion, nit, estado, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [nombre_proveedor, telefono, email, direccion, nit, estado, usuario_id]
+        "INSERT INTO Proveedores (nombre_proveedor, telefono, email, direccion, nit, estado) VALUES (?, ?, ?, ?, ?, ?)",
+        [nombre_proveedor, telefono, email, direccion, nit, estado]
       );
 
       res.status(201).json({
@@ -62,15 +53,7 @@ const proveedoresController = {
 
   getProveedores: async (req, res) => {
     try {
-      const [rows] = await pool.query(`
-        SELECT
-            Usuarios.*,
-            rol.name_rol
-        FROM
-            Usuarios
-        JOIN rol ON Usuarios.rol_id = rol.id 
-        WHERE Usuarios.rol_id = 5
-        `);
+      const [rows] = await pool.query(`SELECT * FROM Proveedores`);
 
       if (rows.length > 0) {
         const data = rows.filter((item) => item.rol_id !== 1);
@@ -88,7 +71,7 @@ const proveedoresController = {
     const { id } = req.params;
     try {
       const [rows] = await pool.query(
-        "SELECT * FROM Proveedores WHERE usuario_id = ?",
+        "SELECT * FROM Proveedores WHERE proveedor_id = ?",
         [id]
       );
       if (rows.length > 0) {
@@ -101,6 +84,42 @@ const proveedoresController = {
     } catch (error) {
       console.error("Error al obtener proveedor por ID:", error);
       res.status(500).json({ message: "Error al obtener proveedor" });
+    }
+  },
+
+  updateProveedorStatus: async (req, res) => {
+    const { usuario_id } = req.params; // Obtener el ID del usuario de los parámetros de la ruta
+    const { estado } = req.body; // Obtener el nuevo estado del cuerpo de la petición
+
+    try {
+      // Verificar si el usuario existe
+      const [existingUser] = await pool.query(
+        "SELECT * FROM Proveedor WHERE proveedor_id = ?",
+        [usuario_id]
+      );
+
+      if (existingUser.length === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      // Actualizar el estado del usuario en la base de datos
+      const [result] = await pool.query(
+        "UPDATE Proveedor SET estado = ? WHERE proveedor_id = ?",
+        [estado, usuario_id]
+      );
+
+      if (result.affectedRows > 0) {
+        res.json({ message: "Estado del usuario actualizado exitosamente" });
+      } else {
+        res
+          .status(500)
+          .json({ message: "Error al actualizar el estado del usuario" });
+      }
+    } catch (error) {
+      console.error("Error al actualizar el estado del usuario:", error);
+      res
+        .status(500)
+        .json({ message: "Error al actualizar el estado del usuario" });
     }
   },
 };

@@ -4,7 +4,15 @@ import { encryptPassword } from "./pass-hash.js";
 
 const usuariosController = {
   createUser: async (req, res) => {
-    const { nombre_usuario, contrasena, email, rol_id } = req.body;
+    const {
+      nombre_usuario,
+      contrasena,
+      email,
+      rol_id,
+      documento,
+      direccion,
+      telefono,
+    } = req.body;
 
     try {
       // Verificar si el nombre de usuario o el email ya existen
@@ -14,7 +22,7 @@ const usuariosController = {
       );
       if (existingUser.length > 0) {
         return res.status(409).json({
-          message: "El nombre de usuario o el email ya están registrados",
+          message: "el email ya están registrados",
         });
       }
 
@@ -25,6 +33,11 @@ const usuariosController = {
       const [result] = await pool.query(
         "INSERT INTO Usuarios (nombre_usuario, contrasena, email, rol_id) VALUES (?, ?, ?, ?)",
         [nombre_usuario, hashedPassword, email, rol_id]
+      );
+
+      const [result2] = await pool.query(
+        "INSERT INTO Clientes (nombre_cliente, documento, direccion, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?, ?)",
+        [nombre_usuario, documento, direccion, telefono, email, result.insertId]
       );
 
       res.status(201).json({
