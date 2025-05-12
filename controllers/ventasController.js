@@ -105,6 +105,94 @@ ORDER BY
     }
   },
 
+  createCambio: async (req, res) => {
+    const { cambios } = req.body;
+
+    try {
+      cambios.forEach(async (items) => {
+        const {
+          venta_original_id,
+          producto_original_id,
+          cantidad_original,
+          producto_nuevo_id,
+          cantidad_nueva,
+          fecha_cambio,
+          motivo_cambio,
+          estado_cambio,
+          observaciones,
+        } = items;
+
+        await pool.query(
+          "INSERT INTO Cambios (venta_original_id,producto_original_id,cantidad_original,producto_nuevo_id,cantidad_nueva,fecha_cambio,motivo_cambio,estado_cambio,observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            venta_original_id,
+            producto_original_id,
+            cantidad_original,
+            producto_nuevo_id,
+            cantidad_nueva,
+            fecha_cambio,
+            motivo_cambio,
+            estado_cambio,
+            observaciones,
+          ]
+        );
+      });
+
+      // Aquí podrías también actualizar el stock de los productos si es necesario
+
+      res.status(201).json({ message: "cambio hecho" });
+    } catch (error) {
+      console.error("Error al crear cambio:", error);
+      res.status(500).json({ message: "Error al crear cambio" });
+    }
+  },
+
+  getAllCambios: async (req, res) => {
+    try {
+      const [rows] = await pool.query(`
+      SELECT
+        c.*,
+        v.*,
+        u.*,
+         po.nombre_producto AS nombre_producto_original,
+        po.precio_venta AS precio_venta_original,
+        pn.nombre_producto AS nombre_producto_nuevo,
+        pn.precio_venta AS precio_venta_nuevo
+      FROM
+        Cambios c
+      LEFT JOIN
+        Ventas v ON c.venta_original_id = v.venta_id
+      LEFT JOIN
+        Usuarios u ON v.cliente_id = u.usuario_id
+      LEFT JOIN
+        Productos po ON c.producto_original_id = po.producto_id
+      LEFT JOIN
+        Productos pn ON c.producto_nuevo_id = pn.producto_id
+          ;`);
+      const cambiosAgrupados = {};
+      rows.forEach((row) => {
+        const clienteId = row.usuario_id;
+        if (!cambiosAgrupados[clienteId]) {
+          cambiosAgrupados[clienteId] = {
+            cliente_id: clienteId,
+            email: row.email,
+            cambios: [],
+          };
+        }
+        cambiosAgrupados[clienteId].cambios.push({
+          ...row,
+        });
+      });
+
+      const resultadoFinal = Object.values(cambiosAgrupados);
+
+      res.json(resultadoFinal);
+    } catch (error) {
+      console.error("Error al obtener los cambios:", error);
+      res.status(500).json({ message: "Error al obtener los cambios" });
+    }
+  },
+
   // ... (Implementar updateVenta y deleteVenta si es necesario)
 };
 
