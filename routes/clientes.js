@@ -11,4 +11,11 @@ router.post("/clientes", clientesController.createCliente);
 router.put("/clientes/:id", clientesController.updateCliente);
 router.delete("/clientes/:id", clientesController.deleteCliente);
 
+router.post("/crearServicioTecnico", clientesController.crearServicioTecnico);
+router.get("/getServicioTecnico", clientesController.getServicioTecnico);
+router.get(
+  "/getServicioTecnico/:id",
+  clientesController.getServicioTecnicoByTecnico
+);
+
 export default router;

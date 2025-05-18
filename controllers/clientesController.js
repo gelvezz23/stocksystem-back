@@ -4,7 +4,15 @@ import pool from "../config/db.js";
 const clientesController = {
   getAllClientes: async (req, res) => {
     try {
-      const [rows] = await pool.query("SELECT * FROM Clientes");
+      const [rows] = await pool.query(`
+        SELECT
+          Clientes.*,
+          Usuarios.*
+        FROM
+          Clientes
+        INNER JOIN
+          Usuarios ON Clientes.usuario_id = Usuarios.usuario_id
+      `);
       res.json(rows);
     } catch (error) {
       console.error("Error al obtener clientes:", error);
@@ -132,6 +140,132 @@ const clientesController = {
       if (rows.length > 0) {
         const data = rows.filter((item) => item.rol_id !== 1);
         res.json(data);
+      } else {
+        res.status(404).json({ message: "Usuario no encontrado" });
+      }
+    } catch (error) {
+      console.error("Error al buscar usuario por email:", error);
+      res.status(500).json({ message: "Error al buscar usuario" });
+    }
+  },
+
+  crearServicioTecnico: async (req, res) => {
+    try {
+      const {
+        cliente_id,
+        producto_id,
+        fecha_inicio,
+        fecha_fin,
+        descripcion_problema,
+        diagnostico,
+        solucion,
+        estado,
+        tecnico_id,
+        direccion_servicio,
+        garantia,
+      } = req.body;
+      console.log({
+        cliente_id,
+        producto_id,
+        fecha_inicio,
+        fecha_fin,
+        descripcion_problema,
+        diagnostico,
+        solucion,
+        estado,
+        tecnico_id,
+        direccion_servicio,
+        garantia,
+      });
+      // Validar que los campos obligatorios estén presentes (puedes agregar más validaciones)
+      if (
+        !cliente_id ||
+        !fecha_inicio ||
+        !descripcion_problema ||
+        !tecnico_id ||
+        !direccion_servicio
+      ) {
+        return res.status(400).json({ message: "Faltan campos obligatorios." });
+      }
+
+      const [result] = await pool.query(
+        "INSERT INTO Servicios_Tecnicos (cliente_id, producto_id, fecha_inicio, fecha_fin, descripcion_problema, diagnostico, solucion, estado, tecnico_id, direccion_servicio, garantia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          cliente_id,
+          producto_id,
+          fecha_inicio,
+          fecha_fin,
+          descripcion_problema,
+          diagnostico,
+          solucion,
+          estado,
+          tecnico_id,
+          direccion_servicio,
+          garantia,
+        ]
+      );
+
+      res.status(201).json({
+        message: "Servicio creado exitosamente.",
+        servicio_id: result.insertId,
+      });
+    } catch (error) {
+      console.error("Error al crear el servicio:", error);
+      res.status(500).json({ message: "Error al crear el servicio." });
+    }
+  },
+
+  getServicioTecnico: async (req, res) => {
+    try {
+      const [rows] = await pool.query(`
+        SELECT
+  Servicios_Tecnicos.*,
+  Cliente.documento AS cliente_documento,
+  Cliente.email AS cliente_email,
+  Tecnico.documento AS tecnico_documento,
+  Tecnico.email AS tecnico_email
+FROM
+  Servicios_Tecnicos
+INNER JOIN
+  Clientes AS Cliente ON Servicios_Tecnicos.cliente_id = Cliente.usuario_id
+INNER JOIN
+  Clientes AS Tecnico ON Servicios_Tecnicos.tecnico_id = Tecnico.usuario_id;  `);
+
+      if (rows.length > 0) {
+        //const data = rows.filter((item) => item.rol_id !== 1);
+        res.json(rows);
+      } else {
+        res.status(404).json({ message: "Usuario no encontrado" });
+      }
+    } catch (error) {
+      console.error("Error al buscar usuario por email:", error);
+      res.status(500).json({ message: "Error al buscar usuario" });
+    }
+  },
+
+  getServicioTecnicoByTecnico: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const [rows] = await pool.query(
+        `
+        SELECT
+  Servicios_Tecnicos.*,
+  Cliente.documento AS cliente_documento,
+  Cliente.email AS cliente_email,
+  Tecnico.documento AS tecnico_documento,
+  Tecnico.email AS tecnico_email
+FROM
+  Servicios_Tecnicos
+INNER JOIN
+  Clientes AS Cliente ON Servicios_Tecnicos.cliente_id = Cliente.usuario_id
+INNER JOIN
+  Clientes AS Tecnico ON Servicios_Tecnicos.tecnico_id = Tecnico.usuario_id WHERE tecnico_id = ?  `,
+        [id]
+      );
+
+      if (rows.length > 0) {
+        //const data = rows.filter((item) => item.rol_id !== 1);
+        res.json(rows);
       } else {
         res.status(404).json({ message: "Usuario no encontrado" });
       }
