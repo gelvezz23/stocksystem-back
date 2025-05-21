@@ -17,5 +17,6 @@ router.get(
   "/getServicioTecnico/:id",
   clientesController.getServicioTecnicoByTecnico
 );
+router.get("/getDateTecnico/:id", clientesController.getDateTecnicoByTecnico);
 
 export default router;

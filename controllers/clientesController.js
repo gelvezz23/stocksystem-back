@@ -274,6 +274,42 @@ INNER JOIN
       res.status(500).json({ message: "Error al buscar usuario" });
     }
   },
+
+  getDateTecnicoByTecnico: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const [rows] = await pool.query(
+        `
+        SELECT
+  Servicios_Tecnicos.*,
+  Cliente.documento AS cliente_documento,
+  Cliente.email AS cliente_email,
+  Tecnico.documento AS tecnico_documento,
+  Tecnico.email AS tecnico_email
+FROM
+  Servicios_Tecnicos
+INNER JOIN
+  Clientes AS Cliente ON Servicios_Tecnicos.cliente_id = Cliente.usuario_id
+INNER JOIN
+  Clientes AS Tecnico ON Servicios_Tecnicos.tecnico_id = Tecnico.usuario_id WHERE tecnico_id = ?  `,
+        [id]
+      );
+
+      if (rows.length > 0) {
+        const data = rows.map((item) => {
+          return {
+            fecha_inicio: item.fecha_inicio,
+          };
+        });
+        res.json(data);
+      } else {
+        res.status(404).json([]);
+      }
+    } catch (error) {
+      console.error("Error al buscar usuario por email:", error);
+      res.status(500).json([]);
+    }
+  },
 };
 
 export default clientesController;
