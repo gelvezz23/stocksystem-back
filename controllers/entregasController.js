@@ -5,7 +5,7 @@ const entregasController = {
   getAllEntregas: async (req, res) => {
     try {
       const [rows] = await pool.query(
-        "SELECT e.*, v.venta_id AS venta_numero, c.nombre_cliente FROM Entregas e JOIN Ventas v ON e.venta_id = v.venta_id JOIN Clientes c ON v.cliente_id = c.cliente_id"
+        "SELECT e.*, v.venta_id AS venta_numero, c.nombre_cliente, c.documento FROM Entrega e JOIN Ventas v ON e.venta_id = v.venta_id JOIN Clientes c ON v.cliente_id = c.usuario_id"
       );
       res.json(rows);
     } catch (error) {
@@ -34,37 +34,27 @@ const entregasController = {
 
   createEntrega: async (req, res) => {
     const {
-      venta_id,
-      fecha_envio,
       direccion_entrega,
-      ciudad_entrega,
-      departamento_entrega,
-      codigo_postal_entrega,
-      metodo_envio,
-      numero_seguimiento,
-      estado_entrega,
-      fecha_entrega_estimada,
-      fecha_entrega_real,
-      observaciones,
-      usuario_responsable_id,
+      estado,
+      fecha_envio,
+      venta_id,
+      cliente_id,
+      observacion,
     } = req.body;
     try {
       const [result] = await pool.query(
-        "INSERT INTO Entregas (venta_id, fecha_envio, direccion_entrega, ciudad_entrega, departamento_entrega, codigo_postal_entrega, metodo_envio, numero_seguimiento, estado_entrega, fecha_entrega_estimada, fecha_entrega_real, observaciones, usuario_responsable_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        `INSERT INTO Entrega (direccion_entrega,
+      estado,
+      fecha_envio,
+      venta_id,
+      cliente_id, observacion) VALUES (?, ?, ?, ?, ?)`,
         [
-          venta_id,
-          fecha_envio,
           direccion_entrega,
-          ciudad_entrega,
-          departamento_entrega,
-          codigo_postal_entrega,
-          metodo_envio,
-          numero_seguimiento,
-          estado_entrega,
-          fecha_entrega_estimada,
-          fecha_entrega_real,
-          observaciones,
-          usuario_responsable_id,
+          estado,
+          fecha_envio,
+          venta_id,
+          cliente_id,
+          observacion,
         ]
       );
       res
@@ -138,6 +128,39 @@ const entregasController = {
       console.error("Error al eliminar entrega:", error);
       res.status(500).json({ message: "Error al eliminar entrega" });
     }
+  },
+
+  updateEstado: async (req, res) => {
+    // ... (código existente del backend) ...
+
+    // Endpoint para actualizar el estado de una entrega
+
+    const { id } = req.params;
+    const { estado } = req.body; // Esperamos recibir el nuevo estado en el cuerpo de la petición
+
+    try {
+      const [result] = await pool.query(
+        "UPDATE Entrega SET estado = ? WHERE entrega_id = ?",
+        [estado, Number(id)]
+      );
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Entrega no encontrada." });
+      }
+
+      res.json({
+        message: "Estado de entrega actualizado con éxito.",
+        id_entrega: id,
+        new_estado: estado,
+      });
+    } catch (error) {
+      console.error(`Error al actualizar la entrega ${id}:`, error);
+      res.status(500).json({
+        message: "Error interno del servidor al actualizar la entrega.",
+      });
+    }
+
+    // ... (rest of your backend code) ...
   },
 };
 

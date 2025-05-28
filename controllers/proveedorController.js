@@ -94,7 +94,7 @@ const proveedoresController = {
     try {
       // Verificar si el usuario existe
       const [existingUser] = await pool.query(
-        "SELECT * FROM Proveedor WHERE proveedor_id = ?",
+        "SELECT * FROM Proveedores WHERE proveedor_id = ?",
         [usuario_id]
       );
 
@@ -104,7 +104,7 @@ const proveedoresController = {
 
       // Actualizar el estado del usuario en la base de datos
       const [result] = await pool.query(
-        "UPDATE Proveedor SET estado = ? WHERE proveedor_id = ?",
+        "UPDATE Proveedores SET estado = ? WHERE proveedor_id = ?",
         [estado, usuario_id]
       );
 
