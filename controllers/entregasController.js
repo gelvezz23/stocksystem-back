@@ -5,7 +5,7 @@ const entregasController = {
   getAllEntregas: async (req, res) => {
     try {
       const [rows] = await pool.query(
-        "SELECT e.*, v.venta_id AS venta_numero, c.nombre_cliente, c.documento FROM Entrega e JOIN Ventas v ON e.venta_id = v.venta_id JOIN Clientes c ON v.cliente_id = c.usuario_id"
+        "SELECT e.*, v.venta_id AS venta_numero, v.fecha_venta, c.nombre_cliente, c.documento FROM Entrega e JOIN Ventas v ON e.venta_id = v.venta_id JOIN Clientes c ON v.cliente_id = c.usuario_id"
       );
       res.json(rows);
     } catch (error) {
