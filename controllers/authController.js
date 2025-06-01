@@ -1,6 +1,6 @@
 // controllers/authController.js
 import pool from "../config/db.js";
-import { HashingMatch } from "./pass-hash.js";
+import { encryptPassword, HashingMatch } from "./pass-hash.js";
 
 const authController = {
   loginUser: async (req, res) => {

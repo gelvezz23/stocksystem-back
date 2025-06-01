@@ -77,10 +77,12 @@ const usuariosController = {
       const [rows] = await pool.query(`
         SELECT
     Usuarios.*,
+    Clientes.documento,
     rol.name_rol
 FROM
     Usuarios
 JOIN rol ON Usuarios.rol_id = rol.id
+JOIN Clientes ON Usuarios.usuario_id = Clientes.usuario_id
         `);
 
       if (rows.length > 0) {

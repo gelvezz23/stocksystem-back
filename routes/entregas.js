@@ -10,4 +10,11 @@ router.post("/entregas", entregasController.createEntrega);
 //router.put("/entregas/:id", entregasController.updateEntrega);
 router.delete("/entregas/:id", entregasController.deleteEntrega);
 router.put("/entregas/:id", entregasController.updateEstado);
+router.put(
+  "/citas/update_evidencia/:id",
+  entregasController.updateEvidenciaCita
+);
+router.put("/citas/update", entregasController.updateCita);
+
+router.delete("/citas/delete/:id", entregasController.deleteCita);
 export default router;
