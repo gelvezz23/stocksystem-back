@@ -123,7 +123,17 @@ ORDER BY
         } = items;
 
         await pool.query(
-          "INSERT INTO Cambios (venta_original_id,producto_original_id,cantidad_original,producto_nuevo_id,cantidad_nueva,fecha_cambio,motivo_cambio,estado_cambio,observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          `INSERT INTO Cambios (
+            venta_original_id,
+            producto_original_id,
+            cantidad_original,
+            producto_nuevo_id,
+            cantidad_nueva,
+            fecha_cambio,
+            motivo_cambio,
+            estado_cambio,
+            observaciones) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             venta_original_id,
             producto_original_id,
