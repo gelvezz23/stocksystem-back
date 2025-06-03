@@ -43,11 +43,14 @@ const entregasController = {
     } = req.body;
     try {
       const [result] = await pool.query(
-        `INSERT INTO Entrega (direccion_entrega,
-      estado,
-      fecha_envio,
-      venta_id,
-      cliente_id, observacion) VALUES (?, ?, ?, ?, ?)`,
+        `INSERT INTO Entrega (
+            direccion_entrega,
+            estado,
+            fecha_envio,
+            venta_id,
+            cliente_id, 
+            observacion) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
         [
           direccion_entrega,
           estado,
@@ -200,6 +203,7 @@ const entregasController = {
       garantia,
       estado,
       descripcion,
+      solucion,
     } = req.body;
 
     // --- Validación inicial: Asegurarse de que el ID del servicio a actualizar exista ---
@@ -217,6 +221,11 @@ const entregasController = {
     if (fecha_inicio !== undefined) {
       fieldsToUpdate.push("fecha_inicio = ?");
       queryParams.push(fecha_inicio);
+    }
+
+    if (solucion !== undefined) {
+      fieldsToUpdate.push("solucion = ?");
+      queryParams.push(solucion);
     }
     if (direccion_servicio !== undefined) {
       fieldsToUpdate.push("direccion_servicio = ?");

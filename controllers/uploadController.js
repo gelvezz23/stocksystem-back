@@ -5,6 +5,7 @@ dotenv.config();
 
 const uploadFileController = {
   uploadSingleImage: async (req, res) => {
+    console.log("GGG", req.file);
     if (!req.file) {
       return res.status(400).json({
         message:
