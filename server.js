@@ -24,9 +24,10 @@ const corsOptions = {
   optionsSuccessStatus: 204, // Algunas peticiones OPTIONS necesitan este código de estado
 };
 
-app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json());
+
+app.use(cors(corsOptions));
 app.use("/uploads", express.static("uploads"));
 app.use("/api", proveedoresRoutes);
 app.use("/api", categoriasRoutes);
