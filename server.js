@@ -17,7 +17,14 @@ import uploadRoutes from "./routes/uploadFile.js";
 const app = express();
 const PORT = 3001;
 
-app.use(cors());
+const corsOptions = {
+  origin: ["https://stock-sistem.vercel.app/", "*"], // ¡Reemplaza con tus dominios reales!
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Habilita el envío de cookies o encabezados de autorización
+  optionsSuccessStatus: 204, // Algunas peticiones OPTIONS necesitan este código de estado
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
