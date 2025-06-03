@@ -27,7 +27,7 @@ const corsOptions = {
 app.use(bodyParser.json());
 app.use(express.json());
 
-//app.use(cors(corsOptions));
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use("/api", proveedoresRoutes);
 app.use("/api", categoriasRoutes);
