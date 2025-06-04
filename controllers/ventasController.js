@@ -165,9 +165,11 @@ ORDER BY
         v.*,
         u.*,
          po.nombre_producto AS nombre_producto_original,
+         po.codigo AS codigo_producto_original,
         po.precio_venta AS precio_venta_original,
         pn.nombre_producto AS nombre_producto_nuevo,
-        pn.precio_venta AS precio_venta_nuevo
+        pn.precio_venta AS precio_venta_nuevo,
+        pn.codigo AS codigo_producto_nuevo
       FROM
         Cambios c
       LEFT JOIN
