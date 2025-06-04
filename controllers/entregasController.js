@@ -205,6 +205,7 @@ const entregasController = {
       descripcion,
       solucion,
       observacion,
+      producto_id,
     } = req.body;
 
     // --- Validación inicial: Asegurarse de que el ID del servicio a actualizar exista ---
@@ -222,6 +223,11 @@ const entregasController = {
     if (fecha_inicio !== undefined) {
       fieldsToUpdate.push("fecha_inicio = ?");
       queryParams.push(fecha_inicio);
+    }
+
+    if (producto_id !== undefined) {
+      fieldsToUpdate.push("producto_id = ?");
+      queryParams.push(producto_id);
     }
 
     if (observacion !== undefined) {
