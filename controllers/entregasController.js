@@ -228,6 +228,41 @@ const entregasController = {
     if (producto_id !== undefined) {
       fieldsToUpdate.push("producto_id = ?");
       queryParams.push(producto_id);
+
+      const arrayObjetos = JSON.parse(producto_id);
+      for (const product of arrayObjetos) {
+        const { codigo, quantity } = product;
+        const [productStock] = await pool.query(
+          "SELECT stock FROM Productos WHERE codigo = ?",
+          [codigo]
+        );
+
+        if (productStock.length === 0) {
+          throw new Error(`Producto con ID ${producto_id} no encontrado.`);
+        }
+
+        const currentStock = productStock[0].stock;
+
+        if (currentStock < quantity) {
+          // Si no hay suficiente stock, lanzamos un error para revertir la transacción
+          throw new Error(
+            `No hay suficiente stock para el producto ID ${producto_id}. Stock actual: ${currentStock}, Solicitado: ${quantity}`
+          );
+        }
+
+        // Actualizar el stock
+        const [updateResult] = await pool.query(
+          "UPDATE Productos SET stock = stock - ? WHERE codigo = ?",
+          [quantity, codigo]
+        );
+
+        // Opcional: verificar si la actualización afectó alguna fila
+        if (updateResult.affectedRows === 0) {
+          throw new Error(
+            `No se pudo actualizar el stock para el producto ID ${producto_id}.`
+          );
+        }
+      }
     }
 
     if (observacion !== undefined) {
