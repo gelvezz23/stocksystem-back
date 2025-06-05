@@ -8,6 +8,7 @@ router.get("/clientes", clientesController.getAllClientes);
 router.get("/clientes/:id", clientesController.getClienteById);
 router.get("/clientes/tecnico", clientesController.getTecnicos);
 router.post("/clientes", clientesController.createCliente);
+router.patch("/clientes/usuarios", clientesController.updateUser);
 router.put("/clientes/:id", clientesController.updateCliente);
 router.delete("/clientes/:id", clientesController.deleteCliente);
 

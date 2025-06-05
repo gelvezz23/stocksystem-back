@@ -94,6 +94,29 @@ const clientesController = {
     }
   },
 
+  updateUser: async (req, res) => {
+    const { nombre_cliente, email, usuario_id } = req.body;
+    console.log({ nombre_cliente, email, usuario_id });
+    try {
+      const [updateResult2] = await pool.query(
+        "UPDATE Usuarios SET nombre_usuario = ?, email = ? WHERE usuario_id = ?",
+        [nombre_cliente, email, usuario_id]
+      );
+
+      if (updateResult2.affectedRows > 0) {
+        res.status(200).json({
+          message: "Cliente actualizado exitosamente",
+          cliente_id: usuario_id,
+        });
+      } else {
+        res.status(500).json({ message: "Error al actualizar el cliente" });
+      }
+    } catch (error) {
+      console.error("Error al crear cliente:", error);
+      res.status(500).json({ message: "Error al crear cliente" });
+    }
+  },
+
   updateCliente: async (req, res) => {
     const { id } = req.params;
     const { nombre_cliente, direccion, telefono, email } = req.body;
