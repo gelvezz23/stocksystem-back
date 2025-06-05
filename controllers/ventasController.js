@@ -95,6 +95,38 @@ ORDER BY
           "INSERT INTO Detalle_Venta (venta_id, producto_id, cantidad, precio_unitario, subtotal) VALUES (?, ?, ?, ?, ?)",
           [venta_id, producto_id, quantity, precio_venta, subtotal]
         );
+
+        const [productStock] = await pool.query(
+          "SELECT stock FROM Productos WHERE producto_id = ?",
+          [producto_id]
+        );
+
+        if (productStock.length === 0) {
+          throw new Error(`Producto con ID ${producto_id} no encontrado.`);
+        }
+
+        const currentStock = productStock[0].stock;
+
+        if (currentStock < quantity) {
+          // Si no hay suficiente stock, lanzamos un error para revertir la transacción
+          throw new Error(
+            `No hay suficiente stock para el producto ID ${producto_id}. Stock actual: ${currentStock}, Solicitado: ${quantity}`
+          );
+        }
+
+        // Actualizar el stock
+        const [updateResult] = await pool.query(
+          "UPDATE Productos SET stock = stock - ? WHERE producto_id = ?",
+          [quantity, producto_id]
+        );
+
+        // Opcional: verificar si la actualización afectó alguna fila
+        if (updateResult.affectedRows === 0) {
+          throw new Error(
+            `No se pudo actualizar el stock para el producto ID ${producto_id}.`
+          );
+        }
+
         // Aquí podrías también actualizar el stock de los productos si es necesario
       }
 
